@@ -1,5 +1,5 @@
 [package]
-name = "text-table"
+name = "text-tables"
 version = "0.1.0"
 authors = ["Richard Dodd <richard.dodd@itp-group.co.uk>"]
 description = "A terminal/text table prettifier with no dependencies"

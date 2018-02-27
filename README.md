@@ -4,7 +4,8 @@ This library provides very simple table printing using text characters. It has
 no dependencies besides std. I'm interested in making it no_std if this is
 possible, contributions welcome!
 
-Licensed under MIT or Apache-2.0 at your discretion. Message me if this isn't sufficient.
+Licensed under MIT or Apache-2.0 at your discretion. Message me if this isn't
+sufficient.
 
 ## Example
 

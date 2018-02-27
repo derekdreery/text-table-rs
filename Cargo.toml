@@ -18,3 +18,8 @@ include = [
 
 [dependencies]
 
+[badges]
+travis-ci = { repository = "derekdreery/text-table-rs" }
+is-it-maintained-issue-resolution = { repository = "derekdreery/text-table-rs" }
+is-it-maintained-open-issues = { repository = "derekdreery/text-table-rs" }
+

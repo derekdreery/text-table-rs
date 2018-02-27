@@ -26,3 +26,13 @@ fn main() {
     text_tables::render(&mut io::stdout(), data).unwrap();
 }
 ```
+
+outputs
+
+```text
++--------+-------+
+| A      | 2x2   |
++--------+-------+
+| pretty | table |
++--------+-------+
+```

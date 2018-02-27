@@ -1,0 +1,20 @@
+[package]
+name = "text-table"
+version = "0.1.0"
+authors = ["Richard Dodd <richard.dodd@itp-group.co.uk>"]
+description = "A terminal/text table prettifier with no dependencies"
+repository = "https://github.com/derekdreery/text-table"
+homepage = "https://github.com/derekdreery/text-table"
+readme = "README.md"
+categories = ["command-line-utilities", "text-processing"]
+keywords = ["table", "cli", "terminal", "ascii", "pretty"]
+license = "ISC"
+include = [
+    "**/*.rs",
+    "Cargo.toml",
+    "README.md"
+]
+
+
+[dependencies]
+

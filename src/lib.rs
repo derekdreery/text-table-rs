@@ -5,7 +5,7 @@
 //! ```
 //! let data = [["Some", "printable"], ["data", "fields"]];
 //! let mut out = Vec::new();
-//! text_table::render(&mut out, data).unwrap();
+//! text_tables::render(&mut out, data).unwrap();
 //! println!("{}", ::std::str::from_utf8(&out).unwrap());
 //! ```
 

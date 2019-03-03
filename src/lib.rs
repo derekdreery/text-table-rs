@@ -9,8 +9,11 @@
 //! println!("{}", ::std::str::from_utf8(&out).unwrap());
 //! ```
 
-use std::io;
-use std::cmp;
+use std::{
+    cmp,
+    fmt::{Display, Write},
+    io,
+};
 
 const CORNER_STR: &'static str = "+";
 const HORIZ_BORDER_STR: &'static str = "-";
@@ -27,10 +30,11 @@ const NEW_LINE_STR: &'static str = "\n";
 ///
 /// Will panic if all rows are not the same length
 pub fn render<W, T, R, C>(writer: &mut W, data: T) -> io::Result<()>
-    where W: io::Write,
-          T: AsRef<[R]>,
-          R: AsRef<[C]>,
-          C: AsRef<str>
+where
+    W: io::Write,
+    T: AsRef<[R]>,
+    R: AsRef<[C]>,
+    C: Display,
 {
     let widths = widths(&data);
     let data = data.as_ref();
@@ -50,10 +54,13 @@ pub fn render<W, T, R, C>(writer: &mut W, data: T) -> io::Result<()>
 
 /// Get the largest width of each column.
 fn widths<T, R, C>(data: T) -> Vec<usize>
-    where T: AsRef<[R]>,
-          R: AsRef<[C]>,
-          C: AsRef<str>
+where
+    T: AsRef<[R]>,
+    R: AsRef<[C]>,
+    C: Display,
 {
+    // re-use a string to reduce memory allocs.
+    let mut string_buf = String::new();
     let data = data.as_ref();
     let mut widths = vec![0; data.len()];
     // bail early if there is nothing to do
@@ -69,7 +76,9 @@ fn widths<T, R, C>(data: T) -> Vec<usize>
             panic!("rows must be the same length");
         }
         for (idx, cell) in row.iter().enumerate() {
-            widths[idx] = cmp::max(widths[idx], cell.as_ref().len());
+            string_buf.clear();
+            write!(string_buf, "{}", cell).unwrap(); // writing to a string cannot fail.
+            widths[idx] = cmp::max(widths[idx], string_buf.len());
         }
     }
     widths
@@ -91,20 +100,22 @@ fn render_border_line<W: io::Write>(writer: &mut W, lengths: &[usize]) -> io::Re
 }
 
 /// Render a text line
-fn render_text_line<W, C>(writer: &mut W, lengths: &[usize], row: &[C])
-    -> io::Result<()>
-    where W: io::Write,
-          C: AsRef<str>
+fn render_text_line<W, C>(writer: &mut W, lengths: &[usize], row: &[C]) -> io::Result<()>
+where
+    W: io::Write,
+    C: Display,
 {
     if lengths.len() == 0 || lengths[0] == 0 {
         return Ok(());
     }
+    let mut string_buf = String::new();
     write!(writer, "{}", VERT_BORDER_STR)?;
     for (cell, len) in row.iter().zip(lengths.iter()) {
-        let cell = cell.as_ref();
-        let extra = len - cell.len();
-        write!(writer, "{}{}", SPACE_STR, cell)?;
-        for _ in 0..extra+1 {
+        string_buf.clear();
+        write!(string_buf, "{}", cell).unwrap(); // writing to string cannot fail.
+        let extra = len - string_buf.len();
+        write!(writer, "{}{}", SPACE_STR, string_buf)?;
+        for _ in 0..extra + 1 {
             write!(writer, "{}", SPACE_STR)?;
         }
         write!(writer, "{}", VERT_BORDER_STR)?;
@@ -122,13 +133,15 @@ mod tests {
         let tables = vec![
             (vec![], &b""[..]),
             (vec![vec![]], &b""[..]),
-            (vec![vec!["single", "line"], vec!["second", "lines"]],
-&b"+--------+-------+
+            (
+                vec![vec!["single", "line"], vec!["second", "lines"]],
+                &b"+--------+-------+
 | single | line  |
 +--------+-------+
 | second | lines |
 +--------+-------+
-"[..])
+"[..],
+            ),
         ];
         for (table, result) in tables {
             let mut out = Vec::new();

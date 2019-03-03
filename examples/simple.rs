@@ -1,7 +1,7 @@
 extern crate text_tables;
 
-use std::str;
 use std::io;
+use std::str;
 
 fn main() {
     // can be vec or slices

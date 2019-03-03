@@ -62,13 +62,13 @@ where
     // re-use a string to reduce memory allocs.
     let mut string_buf = String::new();
     let data = data.as_ref();
-    let mut widths = vec![0; data.len()];
     // bail early if there is nothing to do
     if data.len() == 0 {
-        return widths;
+        return vec![];
     }
     // this would panic without len check above
     let row_len = data[0].as_ref().len();
+    let mut widths = vec![0; row_len];
     for row in data.iter() {
         let row = row.as_ref();
         if row_len != row.len() {
@@ -134,12 +134,13 @@ mod tests {
             (vec![], &b""[..]),
             (vec![vec![]], &b""[..]),
             (
-                vec![vec!["single", "line"], vec!["second", "lines"]],
-                &b"+--------+-------+
-| single | line  |
-+--------+-------+
-| second | lines |
-+--------+-------+
+                vec![vec!["single", "line", "a"], vec!["second", "lines", "a"]],
+                &b"\
++--------+-------+---+
+| single | line  | a |
++--------+-------+---+
+| second | lines | a |
++--------+-------+---+
 "[..],
             ),
         ];
